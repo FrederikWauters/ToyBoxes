@@ -126,7 +126,9 @@ void DrawIsland(int entry)
     hIsland->Draw();
     hFilteredIsland->Draw("SAME");
     
-    double pedestal =  pulses.at(0)->GetPedestal(); cout << "pedestal " << pedestal << endl;
+    
+    int padNr = island->GetPadZeroIndexed();
+    double pedestal = tpc_parameters.fDefaultFixedPedestalValues[padNr];
     pedestalLine = new TLine(0,pedestal,samples.size()+1,pedestal);
     pedestalLine->SetLineColor(kRed);
     pedestalLine->Draw("SAME");
@@ -175,11 +177,12 @@ void Loop()
   return;
 }
 
-vector<TTPCMiniPulse*>  ProcessIsland(int entry, bool print = false)
+vector<TTPCMiniPulse*>  ProcessIsland(int entry, bool print = false, bool addIsland = false)
 {
   cout << "Process island " << endl;
   tree->GetEntry(entry);
   vector<TTPCGenericPulse*> pulses =  pulsefinder->Process(island);
+  //AddIsland(
   vector<TTPCMiniPulse*> vOut;
   cout << "size pulses " << pulses.size() << endl;
   if(pulses.size()>0)
@@ -193,6 +196,13 @@ vector<TTPCMiniPulse*>  ProcessIsland(int entry, bool print = false)
   }
   return vOut;
 }
+
+/*void AddPulse(double time, double amplitude, entry)
+{
+  int padNr = ile->GetPadZeroIndexed();
+  double pedestal = tpc_parameters.fDefaultFixedPedestalValues(padNr);
+  double pedestal = ile
+}*/
 
 int Setup()
 {
